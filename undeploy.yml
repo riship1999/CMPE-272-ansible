@@ -1,0 +1,22 @@
+---
+- hosts: webservers
+  become: true
+  tasks:
+    - name: Stop and disable Apache
+      service:
+        name: "{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}"
+        state: stopped
+        enabled: no
+
+    - name: Remove Apache
+      apt:
+        name: apache2
+        state: absent
+      when: ansible_os_family == "Debian"
+
+    - name: Remove Apache
+      yum:
+        name: httpd
+        state: absent
+      when: ansible_os_family == "RedHat"
+
